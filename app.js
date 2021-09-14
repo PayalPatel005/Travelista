@@ -11,6 +11,7 @@ let hotelsRouter=require('./routes/hotels');
 let Hotel=require('./models/hotels').Hotel;
 let Post = require('./models/posts').Post;
 let auth = require('./controllers/auth');
+let port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
 
@@ -18,12 +19,10 @@ mongoose.connect('mongodb://localhost/travels', {useUnifiedTopology: true , useN
 
 app.use(express.json());
 
-
 let imageStorage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'public/images'),
     filename: (req, file, cb) => cb(null, file.originalname)
 })
-//app.use(multer({dest: 'public/images'}).single('imageFile'));
 app.use(multer({storage: imageStorage}).single('imageFile'));
 app.use(express.static('public'));
 app.use(cookieParser()); //so that cookies are automatically generated for every request.
@@ -36,7 +35,6 @@ then it will be redirected callback-requests.js*/
 app.use('/emails', emailsRouter);
 app.use('/users', usersRouter);
 
-
 app.get('/sight', async (req, res) =>{
     let id = req.query.id;
     let post = await Post.findOne({id:id});
@@ -47,19 +45,6 @@ app.get('/sight', async (req, res) =>{
         text: post.text
     })
 })
-
-//For Hotel
-/*app.get('/sight1', async (req, res) =>{
-    let id = req.query.id;
-    let hotel = await Hotel.findOne({id:id});
-    res.render('sight1', {
-        title: post.title,
-        imageUrl: post.imageUrl,
-        date: post.date,
-        text: post.text
-    })
-})*/
-
 
 app.get('/admin', (req,res) =>{
     /*to read the cookie */
@@ -75,4 +60,4 @@ app.get('/login', (req, res) =>{
     res.render('login');
 })
 
-app.listen(3000, () => console.log('Listening 3000...'));
+app.listen(port, () => console.log('Listening 3000...'));
